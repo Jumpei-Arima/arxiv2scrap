@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BomPlugin = require('webpack-utf8-bom')
 
 module.exports = [{
     entry: {
@@ -40,7 +41,8 @@ module.exports = [{
                 from: 'images/icon128.png' ,
                 to: path.join(__dirname, 'dist')
             }
-        ])
+        ]),
+        new BomPlugin(true)
     ],
     module: {
         rules: [{
