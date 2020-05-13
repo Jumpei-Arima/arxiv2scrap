@@ -1,2 +1,4 @@
 dist/*
 packages/*
+key.pem
+node_modules/
