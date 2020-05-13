@@ -70,12 +70,15 @@ UI = {
 
         var toggleButton = new MDCIconButtonToggle(document.getElementById('a2s-save'));
         $("#a2s-save").on("click", ()=> {
-            const title = $("#a2s-paper-title")[0].value;
-            const abst  = $("#a2s-paper-abstract")[0].value;
+            const title   = $("#a2s-paper-title")[0].value;
+            const abst    = $("#a2s-paper-abstract")[0].value;
+            const authors = $("#a2s-paper-authors")[0].value;
             const tags  = _.map(self.chipSet.chips, (chip) => {
                                 return "#" + document.getElementById(chip.id).dataset.tag;
                             }).join(' ');
-            const body = tags + "\n" + self.url + "\n>" + abst + "\n";
+            const base = "[** 0. とりあえず一言]\n\n[** 1. どんなもの？]\n\n[** 2. 先行研究と比べてどこがすごい？]\n\n[** 3. 技術や手法のキモはどこ？]\n\n[** 4. どうやって有効だと検証した？]\n\n[** 5. 議論はある？]\n\n[** 6. 次に読むべき論文は？]\n\n[** 7. メモ]\n\n[** 8. コメント]\n";
+
+            const body = tags + "\nAuthor: " + authors + "\nResearch institute: \n"+ self.url + "\n>" + abst + "\n\n" + base;
 
             chrome.storage.local.get("a2sProjectName", (d) => {
                 const projectUrl = `https://scrapbox.io/${d.a2sProjectName}`;
@@ -115,13 +118,12 @@ UI = {
         self.url = data.url;
         $("#a2s-paper-title").val(data.paperTitle).focus();
         $("#a2s-paper-abstract").val(data.abstract).focus();
-        for (author of data.authors) {
-            const templateStr = require('../html/_chip.html');
-            const compiled = _.template(templateStr);
-            const chipEl = self._str2elem( compiled({ tag: author.trim().replace(/\ +/g, '_') }) );
-            $(".mdc-chip-set").append(chipEl);
-            self.chipSet.addChip(chipEl);
-        }
+        $("#a2s-paper-authors").val(_.map(data.authors, (author) => {return "[" + author + "]";}).join(', ')).focus();
+        const templateStr = require('../html/_chip.html');
+        const compiled = _.template(templateStr);
+        const chipEl = self._str2elem( compiled({ tag: "survey" }) );
+        $(".mdc-chip-set").append(chipEl);
+        self.chipSet.addChip(chipEl);
     }
 };
 
